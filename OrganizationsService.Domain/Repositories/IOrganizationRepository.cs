@@ -41,7 +41,7 @@ namespace OrganizationsService.Domain.Repositories
         /// <param name="inn">The INN to check.</param>
         /// <param name="ct">The cancellation token.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains true if the INN is in use; otherwise, false.</returns>
-        public Task<bool> InnInUseAsync(string inn, CancellationToken ct = default);
+        public Task<bool> TinInUseAsync(string inn, CancellationToken ct = default);
         /// <summary>
         /// Deletes an organization from the repository.
         /// </summary>

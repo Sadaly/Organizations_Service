@@ -11,7 +11,7 @@ namespace OrganizationsService.Infrastructure.Persistence
         public async Task<IReadOnlyList<Organization>> ListAsync(string? search, CancellationToken ct)
         {
             var query = db.Organizations.AsNoTracking();
-            if (!string.IsNullOrWhiteSpace(search))
+            if (search is not null)
             {
                 var pattern = $"%{EscapeLike(search)}%";
                 query = query.Where(o => EF.Functions.ILike(o.Name, pattern, @"\") || EF.Functions.ILike(o.Tin, pattern, @"\"));
@@ -35,7 +35,7 @@ namespace OrganizationsService.Infrastructure.Persistence
             await SaveUpdateAsync(organization, ct);
         }
 
-        public async Task<bool> InnInUseAsync(string inn, CancellationToken ct) =>
+        public async Task<bool> TinInUseAsync(string inn, CancellationToken ct) =>
             await db.Organizations.AsNoTracking().AnyAsync(o => o.Tin == inn, ct);
 
         public async Task DeleteAsync(Organization organization, CancellationToken ct)
