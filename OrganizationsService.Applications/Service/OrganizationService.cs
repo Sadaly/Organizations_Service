@@ -41,7 +41,7 @@ public class OrganizationService(IOrganizationRepository repository) : IOrganiza
         var org = await repository.GetByIdAsync(id, ct) ?? throw new KeyNotFoundException($"Organization with ID '{id}' not found.");
         var tin = input.Tin.Trim();
         // Check if TIN is already in use (database constraint will also prevent duplicates, but we want to provide a better error message)
-        if (await repository.TinInUseAsync(tin, ct))
+        if (await repository.TinInUseAsync(tin, id, ct))
             throw new DuplicateTinException(tin);
         
         // TODO: use AutoMapper to map input to entity

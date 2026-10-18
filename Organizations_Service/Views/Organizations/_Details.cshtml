@@ -1,0 +1,18 @@
+@model OrganizationDto
+
+<dl class="row">
+    <dt class="col-sm-3">Название</dt>
+    <dd class="col-sm-9">@Model.Name</dd>
+    <dt class="col-sm-3">ИНН</dt>
+    <dd class="col-sm-9">@Model.Tin</dd>
+    <dt class="col-sm-3">Адрес</dt>
+    <dd class="col-sm-9">@Model.Address</dd>
+    <dt class="col-sm-3">Телефон</dt>
+    <dd class="col-sm-9">@Model.Phone</dd>
+    <dt class="col-sm-3">Email</dt>
+    <dd class="col-sm-9">@Model.Email</dd>
+    <dt class="col-sm-3">Дата регистрации</dt>
+    <dd class="col-sm-9">@Model.RegisteredAt.ToString("dd.MM.yyyy")</dd>
+    <dt class="col-sm-3">Описание</dt>
+    <dd class="col-sm-9">@Model.Description</dd>
+</dl>

@@ -1,0 +1,12 @@
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model OrganizationDto
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<h1 class="h3 mb-3">@Model.Name</h1>
+
+<partial name="_Details" model="Model" />
+
+<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Изменить</a>
+<a asp-action="Index" class="btn btn-secondary">К списку</a>
