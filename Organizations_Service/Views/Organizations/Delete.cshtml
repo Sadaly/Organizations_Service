@@ -1,15 +1,15 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model OrganizationDto
 @{
-    ViewData["Title"] = "Удаление";
+    ViewData["Title"] = "Delete";
 }
 
-<h1 class="h3 mb-3">Удалить организацию?</h1>
-<div class="alert alert-warning">Это действие нельзя отменить.</div>
+<h1 class="h3 mb-3">Delete this organization?</h1>
+<div class="alert alert-warning">This action cannot be undone.</div>
 
 <partial name="_Details" model="Model" />
 
 <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
-    <button type="submit" class="btn btn-danger">Удалить</button>
-    <a asp-action="Index" class="btn btn-secondary">Отмена</a>
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
 </form>

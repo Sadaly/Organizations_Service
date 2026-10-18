@@ -24,7 +24,7 @@ namespace OrganizationsService.Web.Controllers
             return View(organization);
         }
 
-        // POST: /Organizations/Create
+        // GET: /Organizations/Create
         public IActionResult Create() => View(new OrganizationFormModel());
 
         // POST: /Organizations/Create
@@ -39,7 +39,7 @@ namespace OrganizationsService.Web.Controllers
             }
             catch (DuplicateTinException)
             {
-                ModelState.AddModelError(nameof(form.Tin), "Organization with this Tin already exists.");
+                ModelState.AddModelError(nameof(form.Tin), "An organization with this TIN already exists.");
                 return View(form);
             }
 
@@ -50,6 +50,9 @@ namespace OrganizationsService.Web.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, OrganizationFormModel form, CancellationToken ct)
         {
+            // The route id and the hidden form field must point to the same organization.
+            if (id != form.Id)
+                return BadRequest();
             if (!ModelState.IsValid)
                 return View(form);
             try
@@ -58,7 +61,7 @@ namespace OrganizationsService.Web.Controllers
             }
             catch (DuplicateTinException)
             {
-                ModelState.AddModelError(nameof(form.Tin), "Organization with this Tin already exists.");
+                ModelState.AddModelError(nameof(form.Tin), "An organization with this TIN already exists.");
                 return View(form);
             }
             catch (KeyNotFoundException)

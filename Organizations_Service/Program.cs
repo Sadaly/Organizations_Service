@@ -60,3 +60,6 @@ app.MapControllerRoute(
 
 
 await app.RunAsync();
+
+// Makes the auto-generated Program class public so integration tests can use WebApplicationFactory<Program>.
+public partial class Program;

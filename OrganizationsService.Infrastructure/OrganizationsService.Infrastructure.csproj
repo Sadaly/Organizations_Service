@@ -14,5 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\OrganizationsService.Applications\OrganizationsService.Applications.csproj" />
   </ItemGroup>
-
+<ItemGroup>
+    <InternalsVisibleTo Include="OrganizationsService.IntegrationsTests" />
+  </ItemGroup>
 </Project>

@@ -1,35 +1,35 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model IReadOnlyList<OrganizationDto>
 @{
-    ViewData["Title"] = "Организации";
+    ViewData["Title"] = "Organizations";
 }
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 m-0">Организации</h1>
-    <a asp-action="Create" class="btn btn-primary">+ Добавить</a>
+    <h1 class="h3 m-0">Organizations</h1>
+    <a asp-action="Create" class="btn btn-primary">+ Add</a>
 </div>
 
 <form asp-action="Index" method="get" class="d-flex gap-2 mb-3">
-    <input type="text" name="search" value="@ViewData["Search"]" class="form-control" placeholder="Поиск по названию или ИНН" />
-    <button type="submit" class="btn btn-outline-secondary">Найти</button>
-    <a asp-action="Index" class="btn btn-outline-light text-dark border">Сброс</a>
+    <input type="text" name="search" value="@ViewData["Search"]" class="form-control" placeholder="Search by name or TIN" />
+    <button type="submit" class="btn btn-outline-secondary">Search</button>
+    <a asp-action="Index" class="btn btn-outline-light text-dark border">Reset</a>
 </form>
 
 @if (Model.Count == 0)
 {
-    <p class="text-muted">Организаций не найдено.</p>
+    <p class="text-muted">No organizations found.</p>
 }
 else
 {
     <table class="table table-striped table-hover align-middle">
         <thead>
             <tr>
-                <th>Название</th>
-                <th>ИНН</th>
-                <th>Телефон</th>
+                <th>Name</th>
+                <th>TIN</th>
+                <th>Phone</th>
                 <th>Email</th>
-                <th>Описание</th>
-                <th class="text-end">Действия</th>
+                <th>Description</th>
+                <th class="text-end">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -42,9 +42,9 @@ else
                     <td>@org.Email</td>
                     <td>@org.Description</td>
                     <td class="text-end text-nowrap">
-                        <a asp-action="Details" asp-route-id="@org.Id" class="btn btn-sm btn-outline-secondary">Просмотр</a>
-                        <a asp-action="Edit" asp-route-id="@org.Id" class="btn btn-sm btn-outline-primary">Изменить</a>
-                        <a asp-action="Delete" asp-route-id="@org.Id" class="btn btn-sm btn-outline-danger">Удалить</a>
+                        <a asp-action="Details" asp-route-id="@org.Id" class="btn btn-sm btn-outline-secondary">View</a>
+                        <a asp-action="Edit" asp-route-id="@org.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@org.Id" class="btn btn-sm btn-outline-danger">Delete</a>
                     </td>
                 </tr>
             }
