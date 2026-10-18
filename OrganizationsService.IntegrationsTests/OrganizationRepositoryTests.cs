@@ -9,9 +9,10 @@ namespace OrganizationsService.IntegrationsTests;
 /// <summary>
 /// Integration tests for the organization repository using a real PostgreSQL database.
 /// Covers ILIKE searches, unique indexes, and the date type.
+/// Each test runs in its own transaction that is rolled back afterwards (see <see cref="TransactionalTestBase"/>).
 /// </summary>
 [Collection(PostgresCollection.Name)]
-public class OrganizationRepositoryTests(PostgresFixture fx)
+public class OrganizationRepositoryTests(PostgresFixture fx) : TransactionalTestBase(fx)
 {
     private static string NewTin() =>
         Random.Shared.NextInt64(1_000_000_000, 9_999_999_999).ToString();
@@ -28,7 +29,7 @@ public class OrganizationRepositoryTests(PostgresFixture fx)
     [Fact]
     public async Task Add_ThenGetById_RoundTripsAllFields()
     {
-        await using var db = fx.CreateDbContext();
+        await using var db = CreateDbContext();
 
         var org = NewOrg("Round-Trip Test");
         org.Description = "Organization used for round-trip testing";
@@ -38,7 +39,7 @@ public class OrganizationRepositoryTests(PostgresFixture fx)
 
         await new OrganizationRepository(db).AddAsync(org);
 
-        await using var db2 = fx.CreateDbContext();
+        await using var db2 = CreateDbContext();
         var loaded = await new OrganizationRepository(db2).GetByIdAsync(org.Id);
 
         Assert.NotNull(loaded);
@@ -55,7 +56,7 @@ public class OrganizationRepositoryTests(PostgresFixture fx)
     {
         var marker = $"Case{Guid.NewGuid():N}"[..14];
 
-        await using var db = fx.CreateDbContext();
+        await using var db = CreateDbContext();
         var repo = new OrganizationRepository(db);
 
         await repo.AddAsync(NewOrg($"Company {marker}"));
@@ -70,7 +71,7 @@ public class OrganizationRepositoryTests(PostgresFixture fx)
     {
         var marker = Guid.NewGuid().ToString("N")[..8];
 
-        await using var db = fx.CreateDbContext();
+        await using var db = CreateDbContext();
         var repo = new OrganizationRepository(db);
 
         await repo.AddAsync(NewOrg($"{marker} 100% reliability"));
@@ -86,7 +87,7 @@ public class OrganizationRepositoryTests(PostgresFixture fx)
     [Fact]
     public async Task TinExists_RespectsExcludeId()
     {
-        await using var db = fx.CreateDbContext();
+        await using var db = CreateDbContext();
         var repo = new OrganizationRepository(db);
         var org = NewOrg("Excluded Organization");
 
@@ -101,13 +102,13 @@ public class OrganizationRepositoryTests(PostgresFixture fx)
     {
         var tin = NewTin();
 
-        await using (var db = fx.CreateDbContext())
+        await using (var db = CreateDbContext())
         {
             await new OrganizationRepository(db)
                 .AddAsync(NewOrg("First Organization", tin));
         }
 
-        await using var db2 = fx.CreateDbContext();
+        await using var db2 = CreateDbContext();
 
         // Bypass service-level validation to verify the PostgreSQL unique constraint.
         await Assert.ThrowsAsync<DuplicateTinException>(
@@ -118,16 +119,30 @@ public class OrganizationRepositoryTests(PostgresFixture fx)
     [Fact]
     public async Task Delete_RemovesRow()
     {
-        await using var db = fx.CreateDbContext();
+        await using var db = CreateDbContext();
         var repo = new OrganizationRepository(db);
         var org = NewOrg("Organization to Delete");
 
         await repo.AddAsync(org);
         await repo.DeleteAsync(org);
 
-        await using var check = fx.CreateDbContext();
+        await using var check = CreateDbContext();
 
         Assert.False(
             await check.Organizations.AnyAsync(o => o.Id == org.Id));
+    }
+
+    [Fact]
+    public async Task Changes_AreNotVisibleOutsideTestTransaction()
+    {
+        await using var db = CreateDbContext();
+        var org = NewOrg("Uncommitted Organization");
+        await new OrganizationRepository(db).AddAsync(org);
+
+        // A context from the fixture uses its own connection, outside the test transaction.
+        await using var outside = Fixture.CreateDbContext();
+
+        Assert.True(await db.Organizations.AnyAsync(o => o.Tin == org.Tin));
+        Assert.False(await outside.Organizations.AnyAsync(o => o.Tin == org.Tin));
     }
 }
