@@ -97,24 +97,25 @@ jobs:
   # CD: deploy to Render
   deploy:
     name: Deploy
-    needs: docker
+    needs: test
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
     env:
       RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
       APP_URL: ${{ vars.APP_URL }}
-      IMAGE: ${{ needs.docker.outputs.image }}
     steps:
+      # The Render service is Git-based: Render pulls this commit and builds the Dockerfile itself.
       - name: Trigger Render deploy
         if: env.RENDER_DEPLOY_HOOK_URL != ''
         run: |
-          image=$(python3 -c 'import os, urllib.parse; print(urllib.parse.quote(os.environ["IMAGE"], safe=""))')
-          curl --fail-with-body -sS -X POST "${RENDER_DEPLOY_HOOK_URL}&imgURL=${image}"
-          echo "Deploy of ${IMAGE} triggered"
+          curl --fail-with-body -sS -X POST "${RENDER_DEPLOY_HOOK_URL}"
+          echo "Render deploy triggered for ${GITHUB_SHA}"
 
       - name: Smoke test /health
         if: env.RENDER_DEPLOY_HOOK_URL != '' && env.APP_URL != ''
         run: |
-          for i in $(seq 1 30); do
+          # Render builds the image itself, so give it more time than for a prebuilt image.
+          for i in $(seq 1 60); do
             if curl -fsS "${APP_URL%/}/health" | grep -q Healthy; then echo "OK"; exit 0; fi
             sleep 10
           done
@@ -122,4 +123,4 @@ jobs:
 
       - name: Deploy skipped
         if: env.RENDER_DEPLOY_HOOK_URL == ''
-        run: echo "::notice::RENDER_DEPLOY_HOOK_URL is not set - image ${IMAGE} was pushed to GHCR, deploy skipped."
+        run: echo "::notice::RENDER_DEPLOY_HOOK_URL is not set - deploy skipped."
