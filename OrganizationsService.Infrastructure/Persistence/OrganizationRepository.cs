@@ -53,7 +53,7 @@ namespace OrganizationsService.Infrastructure.Persistence
             catch (DbUpdateException ex) when(ex.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation })
             {
                 db.Entry(organization).State = EntityState.Detached;
-                throw new DuplicateInnException(organization.Tin);
+                throw new DuplicateTinException(organization.Tin);
             }
         }
 

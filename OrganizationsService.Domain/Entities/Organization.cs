@@ -22,7 +22,7 @@
         /// <summary>
         /// Description of the organization.
         /// </summary>
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; }
         /// <summary>
         /// Address of the organization.
         /// </summary>
