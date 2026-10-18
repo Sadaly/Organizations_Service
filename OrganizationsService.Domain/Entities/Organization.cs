@@ -32,6 +32,10 @@
         /// </summary>
         public string? Phone { get; set; } = string.Empty;
         /// <summary>
+        /// Email address of the organization.
+        /// </summary>
+        public string? Email { get; set; } = string.Empty;
+        /// <summary>
         /// Registration date of the organization.
         /// </summary>
         public DateOnly RegisteredAt { get; set; }
