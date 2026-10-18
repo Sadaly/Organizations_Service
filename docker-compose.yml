@@ -1,0 +1,43 @@
+# Start everything (PostgreSQL + web app) with a single command:
+#       docker compose up -d --build
+# App: http://localhost:8080
+# Database: localhost:5433 (user/password: postgres/postgres, database: organizations)
+name: organizations_service
+
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: organizations
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      # 5433 on the host so it does not clash with a locally installed PostgreSQL.
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d organizations"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  web:
+    build:
+      context: .
+      dockerfile: Organizations_Service/Dockerfile
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_HTTP_PORTS: "8080"
+      ConnectionStrings__Default: Host=db;Port=5432;Database=organizations;Username=postgres;Password=${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        # Wait until PostgreSQL accepts connections; migrations and seed run on app startup.
+        condition: service_healthy
+
+volumes:
+  pgdata:
