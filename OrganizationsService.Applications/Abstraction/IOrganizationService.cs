@@ -21,11 +21,10 @@ public interface IOrganizationService
     /// <summary>
     /// Creates a new organization with the specified input data.
     /// </summary>
-    /// <param name="id">The ID of the organization.</param>
     /// <param name="input">The input data for the new organization.</param>
     /// <param name="ct">The cancellation token.</param>
     /// <returns>The ID of the newly created organization.</returns>
-    Task<int> CreateAsync(int id, OrganizationInput input, CancellationToken ct = default);
+    Task<int> CreateAsync(OrganizationInput input, CancellationToken ct = default);
     /// <summary>
     /// Updates an existing organization with the specified input data.
     /// </summary>

@@ -22,7 +22,7 @@ public class OrganizationService(IOrganizationRepository repository) : IOrganiza
         return org is null ? null : OrganizationDto.FromEntity(org);
     }
 
-    public async Task<int> CreateAsync(int id, OrganizationInput input, CancellationToken ct = default)
+    public async Task<int> CreateAsync(OrganizationInput input, CancellationToken ct = default)
     {
         var tin = input.Tin.Trim();
         // Check if TIN is already in use (database constraint will also prevent duplicates, but we want to provide a better error message)
