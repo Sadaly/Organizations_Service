@@ -35,13 +35,15 @@ namespace OrganizationsService.Domain.Repositories
         /// <param name="ct">The cancellation token.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         public Task UpdateAsync(Organization organization, CancellationToken ct = default);
+
         /// <summary>
         /// Checks if an organization with the specified INN is already in use.
         /// </summary>
         /// <param name="inn">The INN to check.</param>
+        /// <param name="excludeId">The ID of the organization to exclude from the check.</param>
         /// <param name="ct">The cancellation token.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains true if the INN is in use; otherwise, false.</returns>
-        public Task<bool> TinInUseAsync(string inn, CancellationToken ct = default);
+        public Task<bool> TinInUseAsync(string inn, int? excludeId = null, CancellationToken ct = default);
         /// <summary>
         /// Deletes an organization from the repository.
         /// </summary>

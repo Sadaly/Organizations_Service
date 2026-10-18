@@ -35,9 +35,8 @@ namespace OrganizationsService.Infrastructure.Persistence
             await SaveUpdateAsync(organization, ct);
         }
 
-        public async Task<bool> TinInUseAsync(string inn, CancellationToken ct) =>
-            await db.Organizations.AsNoTracking().AnyAsync(o => o.Tin == inn, ct);
-
+        public async Task<bool> TinInUseAsync(string tin, int? excludeId = null, CancellationToken ct = default) =>
+            await db.Organizations.AnyAsync(o => o.Tin == tin && (excludeId == null || o.Id != excludeId), ct);
         public async Task DeleteAsync(Organization organization, CancellationToken ct)
         {
             db.Organizations.Remove(organization);
