@@ -1,4 +1,4 @@
-namespace Organizations_Service.Models
+namespace OrganizationsService.Web.Models
 {
     public class ErrorViewModel
     {
